@@ -1,0 +1,8 @@
+# Byte code
+__pycache__/
+
+# Editors and IDEs
+.vscode/
+
+# Virtual enviroments
+venv/
