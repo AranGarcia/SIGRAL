@@ -6,9 +6,9 @@ import mysql.connector
 import pandas as pd
 
 from . import dbconfig
+from . import constants
 
 
-# TODO: Considerar una abstract factory?
 class MySQLConnectionFactory:
     __instance = None
 
@@ -17,6 +17,7 @@ class MySQLConnectionFactory:
             raise Exception('MySQLConnectionFactory is singleton.')
 
         MySQLConnectionFactory.__instance = self
+        self.con = None
 
     @staticmethod
     def obtener_instancia():
@@ -37,25 +38,42 @@ class MySQLConnectionFactory:
             return Exception('Unable to make connection to database.')
 
     def cerrar_conexion(self):
-        self.con.close()
+        if self.con is not None:
+            self.con.close()
 
     def ejecutar(self, query):
+        if self.con is None:
+            raise Exception('no se ha abierto la conexion.')
         cursor = self.con.cursor()
         cursor.execute(query)
 
-        df = pd.DataFrame(cursor.fetchall(), columns=cursor.column_names)
-        print(df)
+        return pd.DataFrame(cursor.fetchall(), columns=cursor.column_names)
 
 
-"""
-select tiempo.anio, count(*) from orden
-inner join tiempo on tiempo.IdTiempo = orden.idTiempo
-group by tiempo.anio
-order by anio;
-"""
+def ejecutar_query(query):
+    dbins = MySQLConnectionFactory.obtener_instancia()
+    dbins.abrir_conexion()
+    res = dbins.ejecutar(query)
+    dbins.cerrar_conexion()
+
+    return res
+
 
 def consultar_envios(anios=None, categoria='t', meses=None, conj_cat=None):
+    """
+    Consulta todos los envíos realizados en la tabla de hechos de ordenes.
 
+    Los parámetros que especifican la búsqueda son:
+
+    - anios: Cadena con formato 'YYYY-YYYY' que establece el intervalo de
+        búsqueda. Por defecto, None busca todos los años
+    - Categoría: Determina el detalle de los envíos por categoria. Los
+        valores posibles son:
+        - 't': Considera el total de los envíos
+        - 'c': Desglosa envíos por categoría
+        - 's': Lista de constantes con los identificadores de las
+            categorías que se desean consultar.
+    """
     # Clausulas de restriccion:
     select_clause = ['tiempo.anio']
     joins_clause = ['inner join tiempo on tiempo.IdTiempo = orden.idTiempo']
@@ -87,19 +105,27 @@ def consultar_envios(anios=None, categoria='t', meses=None, conj_cat=None):
     # Detalle de categoria:
     if categoria == 'c' or categoria == 's':
         select_clause.append('categoria.Nombre')
-        joins_clause.append('inner join categoria on categoria.IdCategoria = orden.idCategoria')
+        joins_clause.append(
+            'inner join categoria on categoria.IdCategoria = orden.idCategoria')
         group_clause.append('categoria.Nombre')
 
         if categoria == 's':
-            where_clause.append('categoria.IdCategoria in (1,2,3,4,5)')
+            if conj_cat is None:
+                raise ValueError(
+                    'se debe especificar el conjunto de categorias.')
+            where_clause.append(
+                'categoria.IdCategoria in ({})'.format(
+                    ', '.join([str(c) for c in conj_cat]))
+            )
     elif categoria != 't':
         raise ValueError(
             'argumento inválido para categoria: ' + str(categoria))
 
     select_clause.append('count(*) as total_envios')
 
-    query = 'select {} from orden {}{} group by {}'.format(
+    query = 'select {} from {} {}{} group by {}'.format(
         ', '.join(select_clause),
+        constants.Tables.ORDEN.value,
         ' '.join(joins_clause),
         ' where {}'.format(' and '.join(where_clause)) if where_clause else '',
         ', '.join(group_clause)
@@ -107,5 +133,27 @@ def consultar_envios(anios=None, categoria='t', meses=None, conj_cat=None):
 
     conn = MySQLConnectionFactory.obtener_instancia()
     conn.abrir_conexion()
-    conn.ejecutar(query)
+    res = conn.ejecutar(query)
     conn.cerrar_conexion()
+
+    return res
+
+
+def consultar_proveedores_antiguedad(cant_prov):
+    query = """
+    select proveedor.Nombre, min(tiempo.IdTiempo) as primera_orden from orden
+    inner join proveedor on proveedor.IdProveedor = orden.idProveedor
+    inner join tiempo on tiempo.IdTiempo = orden.idTiempo
+    group by proveedor.IdProveedor
+    order by primera_orden asc;
+    """
+
+    conn = MySQLConnectionFactory.obtener_instancia()
+    conn.abrir_conexion()
+    res = conn.ejecutar(query)
+    conn.cerrar_conexion()
+
+    anios = set(res['primera_orden'])
+    antiguos = sorted(anios)[:cant_prov]
+    print('Imprimiendo de años', antiguos)
+    return res[res['primera_orden'].isin(antiguos)]
