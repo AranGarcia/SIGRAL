@@ -19,4 +19,4 @@ python -m pip install -r requirements.txt
 python manage.py runserver
 ```
 
-El dashboard del sistema generador de reportes se puede acceder al dashboard desde el host local, la url es <http://localhost:8000/dashboard>
+La url para dirigirse al dashboard del sistema generador de reportes es <http://localhost:8000/dashboard>
