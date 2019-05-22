@@ -50,16 +50,7 @@ class MySQLConnectionFactory:
         return pd.DataFrame(cursor.fetchall(), columns=cursor.column_names)
 
 
-def ejecutar_query(query):
-    dbins = MySQLConnectionFactory.obtener_instancia()
-    dbins.abrir_conexion()
-    res = dbins.ejecutar(query)
-    dbins.cerrar_conexion()
-
-    return res
-
-
-def consultar_envios(anios=None, categoria='t', meses=None, conj_cat=None):
+def envios_por_anio(anios=None, categoria='t', meses=None, conj_cat=None):
     """
     Consulta todos los envíos realizados en la tabla de hechos de ordenes.
 
@@ -139,14 +130,55 @@ def consultar_envios(anios=None, categoria='t', meses=None, conj_cat=None):
     return res
 
 
-def consultar_proveedores_antiguedad(cant_prov):
-    query = """
+def categorias_por_sucursal(tiempo=None, sepcat=False):
+    select_clause = ['tiempo.anio', 'sucursal.NombreSucursal']
+    joins_clause = ['inner join tiempo on tiempo.IdTiempo = orden.idTiempo',
+                    'inner join sucursal on sucursal.IdSucursal = orden.idSucursal']
+    where_clause = []
+    group_clause = ['tiempo.anio', 'sucursal.IdSucursal']
+
+    if tiempo:
+        rango_anios = [t for t in anios.split('-') if t] if anios else []
+        # Detalle del tiempo
+        if len(rango_anios) == 1:
+            anio = int(rango_anios[0])
+            where_clause.append('tiempo.anio = %d' % anio)
+        elif len(rango_anios) == 2:
+            where_clause.append('tiempo.anio >= %d' % int(rango_anios[0]))
+            where_clause.append('tiempo.anio <= %d' % int(rango_anios[1]))
+
+    # Detalle de categorías
+    if sepcat:
+        select_clause.append('categoria.Nombre')
+        joins_clause.append(
+            'inner join categoria on categoria.IdCategoria = orden.idCategoria')
+        group_clause.append('categoria.IdCategoria')
+
+    select_clause.append('sum(orden.cantidad)')
+    query = 'select {} from {} {}{} group by {}'.format(
+        ', '.join(select_clause),
+        constants.Tables.ORDEN.value,
+        ' '.join(joins_clause),
+        ' where {}'.format(' and '.join(where_clause)) if where_clause else '',
+        ', '.join(group_clause)
+    )
+
+    print(query)
+    conn = MySQLConnectionFactory.obtener_instancia()
+    conn.abrir_conexion()
+    res = conn.ejecutar(query)
+    conn.cerrar_conexion()
+
+    return res
+
+
+def proveedores_por_antiguedad(cant_prov=0):
+    query = '''
     select proveedor.Nombre, min(tiempo.IdTiempo) as primera_orden from orden
     inner join proveedor on proveedor.IdProveedor = orden.idProveedor
     inner join tiempo on tiempo.IdTiempo = orden.idTiempo
     group by proveedor.IdProveedor
-    order by primera_orden asc;
-    """
+    order by primera_orden asc;'''
 
     conn = MySQLConnectionFactory.obtener_instancia()
     conn.abrir_conexion()
@@ -157,3 +189,22 @@ def consultar_proveedores_antiguedad(cant_prov):
     antiguos = sorted(anios)[:cant_prov]
     print('Imprimiendo de años', antiguos)
     return res[res['primera_orden'].isin(antiguos)]
+
+
+def productos_por_cantidad(limite=-1, menos_vendidos=False):
+    query = '''
+    select producto.IdProducto, producto.NombreProducto as nombre, sum(orden.cantidad) as cantidad from orden
+    inner join producto on producto.IdProducto = orden.idProducto
+    group by producto.IdProducto
+    order by sum(orden.cantidad) {}{}'''
+
+    conn = MySQLConnectionFactory.obtener_instancia()
+    conn.abrir_conexion()
+    res = conn.ejecutar(query.format(
+            'asc' if menos_vendidos else 'desc',
+            ' limit %d' % limite if limite > 0 else ''
+        )
+    )
+    conn.cerrar_conexion()
+
+    return res
