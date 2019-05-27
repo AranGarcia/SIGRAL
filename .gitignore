@@ -6,3 +6,6 @@ __pycache__/
 
 # Virtual enviroments
 venv/
+
+# Unit testing
+tests/

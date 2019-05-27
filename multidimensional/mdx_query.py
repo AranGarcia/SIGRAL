@@ -50,120 +50,36 @@ class MySQLConnectionFactory:
         return pd.DataFrame(cursor.fetchall(), columns=cursor.column_names)
 
 
-def envios_por_anio(anios=None, categoria='t', meses=None, conj_cat=None):
-    """
-    Consulta todos los envíos realizados en la tabla de hechos de ordenes.
-
-    Los parámetros que especifican la búsqueda son:
-
-    - anios: Cadena con formato 'YYYY-YYYY' que establece el intervalo de
-        búsqueda. Por defecto, None busca todos los años
-    - Categoría: Determina el detalle de los envíos por categoria. Los
-        valores posibles son:
-        - 't': Considera el total de los envíos
-        - 'c': Desglosa envíos por categoría
-        - 's': Lista de constantes con los identificadores de las
-            categorías que se desean consultar.
-    """
-    # Clausulas de restriccion:
-    select_clause = ['tiempo.anio']
-    joins_clause = ['inner join tiempo on tiempo.IdTiempo = orden.idTiempo']
-    where_clause = []
+def envios_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
+    select_clause = [
+        'tiempo.anio', 'sucursal.NombreSucursal as sucursal', 'count(*) as cantidad_ordenes']
+    joins_clause = [
+        'inner join tiempo on tiempo.IdTiempo = orden.idTiempo',
+        'inner join sucursal on sucursal.IdSucursal = orden.idSucursal']
+    where_clause = ['sucursal.IdSucursal = {}'.format(sucursal)]
     group_clause = ['tiempo.anio']
 
     rango_anios = [t for t in anios.split('-') if t] if anios else []
-    rango_meses = [m for m in meses.split('-') if m] if meses else []
 
-    # Detalle de tiempo
     if len(rango_anios) == 1:
-        anio = int(rango_anios[0])
-        select_clause.append('tiempo.mes')
-        where_clause.append('tiempo.anio = %d' % anio)
-
-        if len(rango_meses) == 2:
-            where_clause.append('tiempo.mes >= %d' % int(rango_meses[0]))
-            where_clause.append('tiempo.mes <= %d' % int(rango_meses[1]))
-        elif len(rango_meses) == 1:
-            where_clause.append('tiempo.mes = %d' % int(rango_meses[0]))
-        group_clause.append('tiempo.mes')
+        where_clause.append('where tiempo.anio = {}'. format(rango_anios[0]))
     elif len(rango_anios) == 2:
-        where_clause.append('tiempo.anio >= %d' % int(rango_anios[0]))
-        where_clause.append('tiempo.anio <= %d' % int(rango_anios[1]))
-    elif len(rango_anios) != 0:
-        raise ValueError(
-            'el intervalo del tiempo solo requiere dos parámetros: %s' % str(rango_anios))
+        where_clause.append('where tiempo.anio >= {} and tiempo.anio <= {}'. format(
+            rango_anios[0], rango_anios[1]))
 
-    # Detalle de categoria:
-    if categoria == 'c' or categoria == 's':
-        select_clause.append('categoria.Nombre')
+    if por_cagtegorias:
+        select_clause.insert(1, 'categoria.Nombre as categoria')
         joins_clause.append(
             'inner join categoria on categoria.IdCategoria = orden.idCategoria')
-        group_clause.append('categoria.Nombre')
+        group_clause.append('orden.idCategoria')
 
-        if categoria == 's':
-            if conj_cat is None:
-                raise ValueError(
-                    'se debe especificar el conjunto de categorias.')
-            where_clause.append(
-                'categoria.IdCategoria in ({})'.format(
-                    ', '.join([str(c) for c in conj_cat]))
-            )
-    elif categoria != 't':
-        raise ValueError(
-            'argumento inválido para categoria: ' + str(categoria))
-
-    select_clause.append('count(*) as total_envios')
-
-    query = 'select {} from {} {}{} group by {}'.format(
+    query = 'select {} from orden {}{} group by {} order by tiempo.anio'.format(
         ', '.join(select_clause),
-        constants.Tables.ORDEN.value,
         ' '.join(joins_clause),
         ' where {}'.format(' and '.join(where_clause)) if where_clause else '',
         ', '.join(group_clause)
     )
 
-    conn = MySQLConnectionFactory.obtener_instancia()
-    conn.abrir_conexion()
-    res = conn.ejecutar(query)
-    conn.cerrar_conexion()
-
-    return res
-
-
-def categorias_por_sucursal(tiempo=None, sepcat=False):
-    select_clause = ['tiempo.anio', 'sucursal.NombreSucursal']
-    joins_clause = ['inner join tiempo on tiempo.IdTiempo = orden.idTiempo',
-                    'inner join sucursal on sucursal.IdSucursal = orden.idSucursal']
-    where_clause = []
-    group_clause = ['tiempo.anio', 'sucursal.IdSucursal']
-
-    if tiempo:
-        rango_anios = [t for t in anios.split('-') if t] if anios else []
-        # Detalle del tiempo
-        if len(rango_anios) == 1:
-            anio = int(rango_anios[0])
-            where_clause.append('tiempo.anio = %d' % anio)
-        elif len(rango_anios) == 2:
-            where_clause.append('tiempo.anio >= %d' % int(rango_anios[0]))
-            where_clause.append('tiempo.anio <= %d' % int(rango_anios[1]))
-
-    # Detalle de categorías
-    if sepcat:
-        select_clause.append('categoria.Nombre')
-        joins_clause.append(
-            'inner join categoria on categoria.IdCategoria = orden.idCategoria')
-        group_clause.append('categoria.IdCategoria')
-
-    select_clause.append('sum(orden.cantidad)')
-    query = 'select {} from {} {}{} group by {}'.format(
-        ', '.join(select_clause),
-        constants.Tables.ORDEN.value,
-        ' '.join(joins_clause),
-        ' where {}'.format(' and '.join(where_clause)) if where_clause else '',
-        ', '.join(group_clause)
-    )
-
-    print(query)
     conn = MySQLConnectionFactory.obtener_instancia()
     conn.abrir_conexion()
     res = conn.ejecutar(query)
@@ -193,7 +109,7 @@ def proveedores_por_antiguedad(cant_prov=0):
 
 def productos_por_cantidad(limite=-1, menos_vendidos=False):
     query = '''
-    select producto.IdProducto, producto.NombreProducto as nombre, sum(orden.cantidad) as cantidad from orden
+    select producto.IdProducto as id, producto.NombreProducto as nombre, sum(orden.cantidad) as cantidad from orden
     inner join producto on producto.IdProducto = orden.idProducto
     group by producto.IdProducto
     order by sum(orden.cantidad) {}{}'''
@@ -201,9 +117,9 @@ def productos_por_cantidad(limite=-1, menos_vendidos=False):
     conn = MySQLConnectionFactory.obtener_instancia()
     conn.abrir_conexion()
     res = conn.ejecutar(query.format(
-            'asc' if menos_vendidos else 'desc',
-            ' limit %d' % limite if limite > 0 else ''
-        )
+        'asc' if menos_vendidos else 'desc',
+        ' limit %d' % limite if limite > 0 else ''
+    )
     )
     conn.cerrar_conexion()
 
