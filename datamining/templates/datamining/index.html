@@ -5,106 +5,53 @@
 <head>
 	<meta charset="UTF-8">
 	<title>Data Mining</title>
-	<link rel="stylesheet" href="{% static 'css/index_style.css' %}">
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/bootstrap/css/bootstrap.min.css' %}">
+	<link rel="stylesheet" href="{% static 'assets/css/styles.css' %}">
 </head>
 
 <body>
 	<header>
 		<h1>Bienvenidos a <i>SIGRAL</i></h1>
 		<nav>
-			<a href="#ancla-2">Envios por año</a>
-			<a href="#ancla-3">Por Localidad</a>
-			<a href="#ancla-4">Más vendidos - Proveedor</a>
-			<a href="#ancla-5">Productos más vendidos</a>
-			<a href="#ancla-6">Productos menos vendidos</a>
+			<a href="#ancla-2" id="ancla-2">Envios por año</a>
+			<a href="#ancla-3" id="ancla-3">Por Localidad</a>
+			<a href="#ancla-4" id="ancla-4">Más vendidos-proveedor</a>
+			<a href="#ancla-5" id="ancla-5">Productos más vendidos</a>
+			<a href="#ancla-6" id="ancla-6">Productos menos vendidos</a>
 		</nav>
 	</header>
 	<div class="wrapper">
-		<section>
+		<section id="formularios">
 			<div class="ancla" id="ancla-1">
 				<h2>Proyecto Data Mining</h2>
 				<p>Instituto Politecnico Nacional</p>
 			</div>
 		</section>
 
-		<section>
-			<div class="ancla" id="ancla-2">
-				<h2>Envios por año</h2>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo quibusdam modi sapiente, ex
-					consequatur repudiandae at sed ut magnam ratione iste illum omnis sint voluptate natus expedita,
-					dignissimos corporis delectus doloremque numquam voluptatum sunt esse, enim quis molestias? Quidem
-					sunt, est quae odio impedit. Odio, nam sit illo, ut atque impedit delectus molestiae blanditiis aut
-					excepturi ab distinctio architecto quasi minima praesentium tempore consequuntur nemo assumenda quam
-					iste dolores! Distinctio consequatur quia non, consectetur? Sit deleniti quis nostrum, optio illum
-					nisi dolorem mollitia blanditiis necessitatibus distinctio eos. Praesentium, tempore odit!
-					<p>
-			</div>
-		</section>
-
-		<section>
-			<div class="ancla" id="ancla-3">
-				<h2>Por Localidad</h2>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo quibusdam modi sapiente, ex
-					consequatur repudiandae at sed ut magnam ratione iste illum omnis sint voluptate natus expedita,
-					dignissimos corporis delectus doloremque numquam voluptatum sunt esse, enim quis molestias? Quidem
-					sunt, est quae odio impedit. Odio, nam sit illo, ut atque impedit delectus molestiae blanditiis aut
-					excepturi ab distinctio architecto quasi minima praesentium tempore consequuntur nemo assumenda quam
-					iste dolores! Distinctio consequatur quia non, consectetur? Sit deleniti quis nostrum, optio illum
-					nisi dolorem mollitia blanditiis necessitatibus distinctio eos. Praesentium, tempore odit!
-					<p>
-			</div>
-		</section>
-
-		<section>
-			<div class="ancla" id="ancla-4">
-				<h2>Más Vendidos - Proveedor</h2>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo quibusdam modi sapiente, ex
-					consequatur repudiandae at sed ut magnam ratione iste illum omnis sint voluptate natus expedita,
-					dignissimos corporis delectus doloremque numquam voluptatum sunt esse, enim quis molestias? Quidem
-					sunt, est quae odio impedit. Odio, nam sit illo, ut atque impedit delectus molestiae blanditiis aut
-					excepturi ab distinctio architecto quasi minima praesentium tempore consequuntur nemo assumenda quam
-					iste dolores! Distinctio consequatur quia non, consectetur? Sit deleniti quis nostrum, optio illum
-					nisi dolorem mollitia blanditiis necessitatibus distinctio eos. Praesentium, tempore odit!
-					<p>
-			</div>
-		</section>
-
-		<section>
-			<div class="ancla" id="ancla-5">
-				<h2>Productos más vendidos</h2>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo quibusdam modi sapiente, ex
-					consequatur repudiandae at sed ut magnam ratione iste illum omnis sint voluptate natus expedita,
-					dignissimos corporis delectus doloremque numquam voluptatum sunt esse, enim quis molestias? Quidem
-					sunt, est quae odio impedit. Odio, nam sit illo, ut atque impedit delectus molestiae blanditiis aut
-					excepturi ab distinctio architecto quasi minima praesentium tempore consequuntur nemo assumenda quam
-					iste dolores! Distinctio consequatur quia non, consectetur? Sit deleniti quis nostrum, optio illum
-					nisi dolorem mollitia blanditiis necessitatibus distinctio eos. Praesentium, tempore odit!
-					<p>
-			</div>
-		</section>
-
-		<section>
-			<div class="ancla" id="ancla-6">
-				<h2>Productos menos Vendidos</h2>
-				<p>
-					Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nemo quibusdam modi sapiente, ex
-					consequatur repudiandae at sed ut magnam ratione iste illum omnis sint voluptate natus expedita,
-					dignissimos corporis delectus doloremque numquam voluptatum sunt esse, enim quis molestias? Quidem
-					sunt, est quae odio impedit. Odio, nam sit illo, ut atque impedit delectus molestiae blanditiis aut
-					excepturi ab distinctio architecto quasi minima praesentium tempore consequuntur nemo assumenda quam
-					iste dolores! Distinctio consequatur quia non, consectetur? Sit deleniti quis nostrum, optio illum
-					nisi dolorem mollitia blanditiis necessitatibus distinctio eos. Praesentium, tempore odit!
-					<p>
-			</div>
-		</section>
-
 	</div>
-	<script src="{% static 'js/jquery.min.js' %}"></script>
-	<script src="{% static 'js/index_script.js'} %"></script>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+	<br>
+
+	<script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+	<script src="{% static 'js/script.js' %}"></script>
+	<script src="{% static 'assets/js/jquery.min.js' %}"></script>
+	<script src="{% static 'assets/bootstrap/js/bootstrap.min.js' %}"></script>
+	<script src="{% static 'js/formularios.js' %}"></script>
 </body>
 
 </html>
+<script>
+	var formulario2 = "{% static 'formularios/2.html' %}";
+	var formulario3 = "{% static 'formularios/3.html' %}";
+	var formulario4 = "{% static 'formularios/4.html' %}";
+	var formulario5 = "{% static 'formularios/5.html' %}";
+	var formulario6 = "{% static 'formularios/6.html' %}";
+</script>
