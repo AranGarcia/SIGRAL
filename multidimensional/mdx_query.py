@@ -73,7 +73,7 @@ def envios_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
             'inner join categoria on categoria.IdCategoria = orden.idCategoria')
         group_clause.append('orden.idCategoria')
 
-    query = 'select {} from orden {}{} group by {} order by tiempo.anio'.format(
+    query = 'select {} from orden {}{} group by {} order by tiempo.anio asc'.format(
         ', '.join(select_clause),
         ' '.join(joins_clause),
         ' where {}'.format(' and '.join(where_clause)) if where_clause else '',
