@@ -1,3 +1,4 @@
+import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -50,6 +51,31 @@ def grafica_envios_por_sucursal(df):
     # ax.set_xticklabels(df['anio'])
 
     plt.title(title)
+    plt.show()
+
+
+def grafica_productos_menos_vendidos(df):
+    anios = sorted([i for i in set(df['anio'])])
+    nombres = []
+    cantidad = []
+
+    for a in anios:
+        # Dataframe de un año
+        subdf = df[df['anio'] == a]
+        ser = subdf['cantidad_enviada']
+        cantidad.append(ser[ser.index[0]])
+        nombres_anio = []
+        ser = subdf['id']
+        nombres.append(mpatches.Patch(color='blue',
+            label='{} - {}'.format(a, ','.join([str(n) for n in ser]))))
+
+    plt.legend(title='ID de productos', handles=nombres)
+    plt.ylabel('Cantidad Enviada')
+    plt.xlabel('Año')
+    plt.bar(anios, cantidad)
+    plt.title('Productos menos vendidos en el tercer\ntrimestre de los años {} al año {}'.format(
+        min(anios), max(anios)))
+    plt.xticks(range(anios[0], anios[-1] + 1))
     plt.show()
 
 
