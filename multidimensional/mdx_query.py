@@ -52,7 +52,7 @@ class MySQLConnectionFactory:
 
 def envios_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
     select_clause = [
-        'tiempo.anio', 'sucursal.NombreSucursal as sucursal', 'count(*) as cantidad_ordenes']
+        'tiempo.anio', 'sucursal.NombreSucursal as sucursal', 'sum(cantidad) as cantidad']
     joins_clause = [
         'inner join tiempo on tiempo.IdTiempo = orden.idTiempo',
         'inner join sucursal on sucursal.IdSucursal = orden.idSucursal']

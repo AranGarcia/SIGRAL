@@ -21,7 +21,7 @@ def grafica_envios_por_sucursal(df):
     ax = plt.subplot(111)
     # Grafica vacía
     if df.shape[0] == 0:
-        title = 'Envios por sucursal'
+        title = 'Artículos enviadas'
     else:
         nom_sucursal = df.iloc[0]['sucursal']
         anios = sorted([i for i in set(df['anio'])])
@@ -29,26 +29,26 @@ def grafica_envios_por_sucursal(df):
         # Años por categoría
         if 'categoria' in df.columns:
             categorias = set(df['categoria'])
-            title = 'Envíos a la sucursal {} (por categorías)'.format(
+            title = 'Artículos enviados a la sucursal\n{} (por categorías)'.format(
                 nom_sucursal.title())
             plots = []
             last_plot = np.zeros(len(anios))
             for subdf in _iter_por_categorias(df):
+                array_cantidad = np.array(subdf['cantidad'], dtype=int)
                 plots.append(
-                    ax.bar(anios, subdf['cantidad_ordenes'], bottom=last_plot))
-                last_plot += np.array(subdf['cantidad_ordenes'])
+                    ax.bar(anios, array_cantidad, bottom=last_plot))
+                last_plot += array_cantidad
             ax.legend(plots, categorias)
 
         # Total de envíos
         else:
-            title = 'Envíos a la sucursal {}'.format(
+            title = 'Artículos enviados a la sucursal\n{}'.format(
                 nom_sucursal.title())
-            ax.bar(anios, df['cantidad_ordenes'])
+            ax.bar(anios, df['cantidad'])
 
-    ax.set_ylabel('Cantidad de envios')
+    ax.set_ylabel('Cantidad de artículos')
     ax.set_xlabel('Año')
     ax.set_xticks(range(min(anios), max(anios) + 1))
-    # ax.set_xticklabels(df['anio'])
 
     plt.title(title)
     plt.show()
@@ -67,7 +67,7 @@ def grafica_productos_menos_vendidos(df):
         nombres_anio = []
         ser = subdf['id']
         nombres.append(mpatches.Patch(color='blue',
-            label='{} - {}'.format(a, ','.join([str(n) for n in ser]))))
+                                      label='{} - {}'.format(a, ','.join([str(n) for n in ser]))))
 
     plt.legend(title='ID de productos', handles=nombres)
     plt.ylabel('Cantidad Enviada')
@@ -93,6 +93,6 @@ def _iter_por_categorias(df):
                     'anio': a,
                     'categoria': c,
                     'sucursal': nom_sucursal,
-                    'cantidad_ordenes': 0
+                    'cantidad': 0
                 }, ignore_index=True)
         yield subdf.sort_values('anio')
