@@ -9,3 +9,6 @@ venv/
 
 # Unit testing
 tests/
+
+# Plots
+plots/

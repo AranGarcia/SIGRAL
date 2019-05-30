@@ -1,6 +1,9 @@
 import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+
+from . import PLOT_DIR
 
 
 def plot_productos(df):
@@ -16,8 +19,8 @@ def plot_productos(df):
     plt.show()
 
 
-def grafica_envios_por_sucursal(df):
-    print(df, '\n\n')
+def grafica_productos_por_sucursal(df):
+    fig = plt.figure()
     ax = plt.subplot(111)
     # Grafica vacía
     if df.shape[0] == 0:
@@ -51,10 +54,16 @@ def grafica_envios_por_sucursal(df):
     ax.set_xticks(range(min(anios), max(anios) + 1))
 
     plt.title(title)
-    plt.show()
+
+    nombre_archivo = os.path.join(PLOT_DIR, 'grafica1.png')
+    fig.savefig(nombre_archivo, dpi=150)
+
+    return nombre_archivo
 
 
 def grafica_productos_menos_vendidos(df):
+    fig = plt.figure()
+
     anios = sorted([i for i in set(df['anio'])])
     nombres = []
     cantidad = []
@@ -76,7 +85,11 @@ def grafica_productos_menos_vendidos(df):
     plt.title('Productos menos vendidos en el tercer\ntrimestre de los años {} al año {}'.format(
         min(anios), max(anios)))
     plt.xticks(range(anios[0], anios[-1] + 1))
-    plt.show()
+
+    nombre_archivo = os.path.join(PLOT_DIR, 'grafica3.png')
+    fig.savefig(nombre_archivo, dpi=150)
+
+    return nombre_archivo
 
 
 def _iter_por_categorias(df):
