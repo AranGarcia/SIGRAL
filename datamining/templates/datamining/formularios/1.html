@@ -1,0 +1,29 @@
+<section>
+    <div class="ancla" id="ancla-2">
+        <h2>Envios por año</h2>
+
+        <h5>Reporte de la cantidad de artículos enviados por sucursal en un intervalo de años,
+            con la capacidad de separar por categorías.</h5>
+
+        <hr>
+
+        <form action="" method="get">
+            <label>Año</label>
+            <select class="form-control">
+                {% for a in anios %}
+                <option value="{{a}}">{{a}}</option>
+                {% endfor %}
+            </select>
+
+            <label for="sucursal">Sucursal</label>
+            <select name="sucursal" class="form-control">
+                {% for suc in sucursales %}
+                <option value="{{suc.0}}"> {{ suc.1 }}</option>
+                {% endfor %}
+            </select> <br>
+
+            <input type="checkbox" name="por_categoria"> Separar por categor&iacute;a<br><br>
+            <button type="button" class="btn btn-outline-primary">Desplegar</button>
+        </form>
+    </div>
+</section>

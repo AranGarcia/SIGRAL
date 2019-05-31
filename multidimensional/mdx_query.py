@@ -147,3 +147,31 @@ def productos_por_cantidad(limite=-1, menos_vendidos=False):
     conn.cerrar_conexion()
 
     return res
+
+#
+#  CONSULTAS PARA FORMULARIOS
+#
+
+def obtener_anios():
+    '''Devuelve todos los años disponibles en la BD.'''
+
+    query = 'select distinct anio from tiempo order by anio asc'
+
+    conn = MySQLConnectionFactory.obtener_instancia()
+    conn.abrir_conexion()
+    res = conn.ejecutar(query)
+    conn.cerrar_conexion()
+
+    return [a for a in res['anio']]
+
+def obtener_sucursales():
+    '''Devuelve todos las sucrusales disponibles en la BD.'''
+
+    query = 'select IdSucursal, NombreSucursal from sucursal'
+
+    conn = MySQLConnectionFactory.obtener_instancia()
+    conn.abrir_conexion()
+    res = conn.ejecutar(query)
+    conn.cerrar_conexion()
+
+    return [tup for tup in zip(res['IdSucursal'], res['NombreSucursal'])]
