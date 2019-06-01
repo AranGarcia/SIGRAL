@@ -1,3 +1,4 @@
+{% load static %}
 <section>
     <div class="ancla" id="ancla-2">
         <h2>Envios por año</h2>
@@ -7,9 +8,16 @@
 
         <hr>
 
-        <form action="" method="get">
-            <label>Año</label>
-            <select class="form-control">
+        <form action="articulos_por_sucursal/" method="get" id="mdxquery1">
+            <label for="lanio"> Desde el año</label>
+            <select name="lanio" class="form-control">
+                {% for a in anios %}
+                <option value="{{a}}">{{a}}</option>
+                {% endfor %}
+            </select>
+
+            <label for="ranio"> Hasta</label>
+            <select name="ranio" class="form-control">
                 {% for a in anios %}
                 <option value="{{a}}">{{a}}</option>
                 {% endfor %}
@@ -23,7 +31,10 @@
             </select> <br>
 
             <input type="checkbox" name="por_categoria"> Separar por categor&iacute;a<br><br>
-            <button type="button" class="btn btn-outline-primary">Desplegar</button>
+
+            <button type="submit" class="btn btn-outline-primary">Desplegar</button>
         </form>
     </div>
 </section>
+
+<script src="{% static 'js/peticiones/formulario1.js' %}"></script>

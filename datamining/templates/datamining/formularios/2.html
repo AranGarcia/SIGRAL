@@ -1,0 +1,13 @@
+{% load static %}
+<section>
+	<div class="ancla" id="ancla-3">
+		<h2>Envios a sucursales</h2>
+		<label>Lista de sucursales</label>
+		<select class="form-control">
+			{% for suc in sucursales %}
+			<option value="{{suc.0}}"> {{ suc.1 }}</option>
+			{% endfor %}
+		</select><br>
+		<button type="button" class="btn btn-outline-primary">Desplegar</button>
+	</div>
+</section>
