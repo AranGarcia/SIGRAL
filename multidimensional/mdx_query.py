@@ -50,7 +50,7 @@ class MySQLConnectionFactory:
         return pd.DataFrame(cursor.fetchall(), columns=cursor.column_names)
 
 
-def envios_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
+def articulos_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
     select_clause = [
         'tiempo.anio', 'sucursal.NombreSucursal as sucursal', 'sum(cantidad) as cantidad']
     joins_clause = [
@@ -62,9 +62,9 @@ def envios_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
     rango_anios = [t for t in anios.split('-') if t] if anios else []
 
     if len(rango_anios) == 1:
-        where_clause.append('where tiempo.anio = {}'. format(rango_anios[0]))
+        where_clause.append('tiempo.anio = {}'. format(rango_anios[0]))
     elif len(rango_anios) == 2:
-        where_clause.append('where tiempo.anio >= {} and tiempo.anio <= {}'. format(
+        where_clause.append('tiempo.anio >= {} and tiempo.anio <= {}'. format(
             rango_anios[0], rango_anios[1]))
 
     if por_cagtegorias:
