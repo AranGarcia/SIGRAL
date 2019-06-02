@@ -1,3 +1,5 @@
+import base64
+
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -49,7 +51,7 @@ def articulos_por_sucursal(request):
     with open(img_path, 'rb') as f:
         img_data = f.read()
 
-    return HttpResponse(img_data, content_type='image/png')
+    return HttpResponse(base64.b64encode(img_data))
 
 
 def __cargar_formulario1(request):

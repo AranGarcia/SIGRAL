@@ -11,9 +11,9 @@ $(function () {
             url: $(form).attr('action'),
             data: formData,
             success: function (data, status, jqXHRobj) {
-                // TODO
+                $('#mdxplot').attr('src', 'data:image/gif;base64,' + data);
             },
-            error: function(jqXHRobj, status, excp){
+            error: function (jqXHRobj, status, excp) {
                 // TODO
             }
         })
