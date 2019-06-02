@@ -21,13 +21,13 @@ def plot_productos(df):
 
 
 def grafica_productos_por_sucursal(df):
-    print(df)
     fig = plt.figure()
     ax = plt.subplot(111)
     # Grafica vacía
     if df.shape[0] == 0:
-        title = 'Artículos enviadas'
-        anios = [i for i in range(2000, datetime.now().year + 1)]
+        title = 'Artículos enviados'
+        anios = [i for i in range(2010, datetime.now().year + 1)]
+        ax.bar(anios, [0 for i in range(len(anios))])
     else:
         nom_sucursal = df.iloc[0]['sucursal']
         anios = sorted([i for i in set(df['anio'])])
