@@ -61,7 +61,7 @@ def grafica_productos_por_sucursal(df):
     nombre_archivo = os.path.join(PLOT_DIR, 'grafica1.png')
     fig.savefig(nombre_archivo, dpi=150)
 
-    return nombre_archivo
+    return os.path.normpath(nombre_archivo)
 
 
 def grafica_productos_menos_vendidos(df):

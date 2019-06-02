@@ -43,10 +43,13 @@ def articulos_por_sucursal(request):
     else:
         anio = '{}-{}'.format(lanio, ranio)
 
-    mdx_plot.grafica_productos_por_sucursal(
+    img_path = mdx_plot.grafica_productos_por_sucursal(
         mdx_query.articulos_por_sucursal(id_sucursal, anio, por_categoria))
 
-    return HttpResponse(content_type='image/png')
+    with open(img_path, 'rb') as f:
+        img_data = f.read()
+
+    return HttpResponse(img_data, content_type='image/png')
 
 
 def __cargar_formulario1(request):
