@@ -10,14 +10,14 @@
 
         <form action="articulos_por_sucursal/" method="get" id="mdxquery1">
             <label for="lanio"> Desde el año</label>
-            <select name="lanio" class="form-control">
+            <select name="lanio" id="lanio" class="form-control">
                 {% for a in anios %}
                 <option value="{{a}}">{{a}}</option>
                 {% endfor %}
             </select>
 
             <label for="ranio"> Hasta</label>
-            <select name="ranio" class="form-control">
+            <select name="ranio" id="ranio" class="form-control">
                 {% for a in anios %}
                 <option value="{{a}}">{{a}}</option>
                 {% endfor %}
@@ -34,6 +34,8 @@
 
             <button type="submit" class="btn btn-outline-primary">Desplegar</button>
         </form><br>
+
+        <div id="alert_placeholder"></div>
 
         <div class="container-fluid">
             <img src="" class="img-fluid" alt="Articulos vendidos por sucursal" id="mdxplot">
