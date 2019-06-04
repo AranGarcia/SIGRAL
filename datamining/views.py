@@ -54,6 +54,16 @@ def articulos_por_sucursal(request):
     return HttpResponse(base64.b64encode(img_data))
 
 
+def tercer_trimestre(request):
+    img_path = mdx_plot.grafica_productos_menos_vendidos(
+        mdx_query.productos_menos_vendidos_vacaciones())
+
+    with open(img_path, 'rb') as f:
+        img_data = f.read()
+
+    return HttpResponse(base64.b64encode(img_data))
+
+
 def __cargar_formulario1(request):
     anios = mdx_query.obtener_anios()
     sucursales = mdx_query.obtener_sucursales()
