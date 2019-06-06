@@ -88,6 +88,31 @@ def articulos_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
     return res
 
 
+def pedidos_suc_cuarto_trim(limite=3):
+    query= '''
+    select orden.idSucursal, sucursal.NombreSucursal, tiempo.anio,
+        sum(cantidad) as cantidad_enviada from orden
+    inner join tiempo on tiempo.IdTiempo = orden.idTiempo
+    inner join sucursal on sucursal.IdSucursal = orden.idSucursal
+    where tiempo.trimestre = 4
+    group by orden.idSucursal, tiempo.anio
+    '''
+
+    conn = MySQLConnectionFactory.obtener_instancia()
+    conn.abrir_conexion()
+    res = conn.ejecutar(query)
+    conn.cerrar_conexion()
+
+    anios = set(res['anio'])
+    ultimos_anios = sorted([a for a in anios], reverse=True)[:limite]
+
+    indices = []
+    for ua in ultimos_anios:
+        cantidad_maxima = max(res[res['anio'] == ua]['cantidad_enviada'])
+        indices.extend(res[(res['anio'] == ua) & (res['cantidad_enviada'] == cantidad_maxima)].index)
+
+    return res.iloc[indices]
+
 def productos_menos_vendidos_vacaciones(limite=10):
     query = '''
     select tiempo.anio, producto.IdProducto as id, producto.NombreProducto as nombre, sum(orden.cantidad) as cantidad_enviada  from orden

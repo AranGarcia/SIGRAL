@@ -64,6 +64,32 @@ def grafica_productos_por_sucursal(df):
     return os.path.normpath(nombre_archivo)
 
 
+def grafica_sucursales_cuarto_trimestre(df):
+    anios = sorted([a for a in set(df['anio'])])
+    sucursales = []
+    cantidad = []
+
+    for a in anios:
+        subdf = df[df['anio'] == a]
+        ser = subdf['cantidad_enviada']
+        cantidad.append(ser[ser.index[0]])
+
+        sucursales.append(mpatches.Patch(
+            color='blue',
+            label='{} - {}'.format(a, ', '.join([str(n) for n in set(subdf['NombreSucursal'])]))))
+
+    plt.legend(title='Sucursales', handles=sucursales)
+    plt.ylabel('Cantidad de artículos pedidos')
+    plt.xlabel('Año')
+    plt.bar(anios, cantidad)
+    plt.xticks(range(anios[0], anios[-1] + 1))
+
+    nombre_archivo = os.path.join(PLOT_DIR, 'grafica2.png')
+    plt.savefig(nombre_archivo, dpi=150)
+
+    return nombre_archivo
+
+
 def grafica_productos_menos_vendidos(df):
     fig = plt.figure()
 

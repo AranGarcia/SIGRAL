@@ -1,13 +1,18 @@
 {% load static %}
 <section>
 	<div class="ancla" id="ancla-3">
-		<h2>Envios a sucursales</h2>
-		<label>Lista de sucursales</label>
-		<select class="form-control">
-			{% for suc in sucursales %}
-			<option value="{{suc.0}}"> {{ suc.1 }}</option>
-			{% endfor %}
-		</select><br>
-		<button type="button" class="btn btn-outline-primary">Desplegar</button>
+		<h2>Cantidad de artículos enviadas a sucursales</h2>
+		<h5>Reporte de las sucursales que hacen mas pedidos de productos en el
+			&uacute;ltimo trimestre de los &uacute;ltimos 3 a&ntilde;os.</h5>
+
+		<form action="cuarto_trimestre/" method="get" id="mdxquery2">
+			<button type="submit" class="btn btn-outline-primary">Desplegar</button>
+		</form>
+		<br><br>
+		<div class="container-fluid">
+			<img src="" class="img-fluid" alt="Articulos vendidos por sucursal" id="mdxplot">
+		</div>
 	</div>
 </section>
+
+<script src="{% static 'js/peticiones/formulario2.js' %}"></script>
