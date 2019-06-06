@@ -121,6 +121,25 @@ def grafica_productos_menos_vendidos(df):
     return nombre_archivo
 
 
+def grafica_antiguedad(df):
+    print(df)
+    anio_actual = datetime.now().year
+    tiempo = sorted([po for po in set(df['primera_orden'])])
+
+    for t in tiempo:
+        subdf = df[df['primera_orden'] == t]
+
+        # print(t, ','.join(map(str, subdf['IdProveedor'])))
+        t_cadena = str(t)
+        anio = t_cadena[:4]
+        mes = t_cadena[4:6]
+        dia = t_cadena[6:]
+
+        print(anio, mes, dia)
+
+    plt.title('Cantidad de años desde que el proveedor suministra al almacén.')
+
+
 def _iter_por_categorias(df):
     """Función auxiliar para crear dataframes por categorías. """
     nom_sucursal = df.iloc[0]['sucursal']

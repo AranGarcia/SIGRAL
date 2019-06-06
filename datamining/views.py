@@ -1,6 +1,6 @@
 import base64
 
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 from multidimensional import mdx_query, mdx_plot
@@ -72,6 +72,36 @@ def tercer_trimestre(request):
         img_data = f.read()
 
     return HttpResponse(base64.b64encode(img_data))
+
+
+def proveedores_antiguedad(request):
+    df = mdx_query.proveedores_por_antiguedad()
+    tiempo = sorted([po for po in set(df['primera_orden'])])
+
+    lista_antiguedades = []
+    for t in tiempo:
+        subdf = df[df['primera_orden'] == t]
+        proveedores = ', '.join(map(str, subdf['Nombre']))
+
+        t_cadena = str(t)
+        anio = t_cadena[:4]
+        mes = t_cadena[4:6]
+        dia = t_cadena[6:]
+        t_llave = '{}-{}-{}'.format(anio, mes, dia)
+
+        lista_antiguedades.append(
+            {
+                'fecha': t_llave,
+                'proveedor': proveedores
+            }
+        )
+
+    return JsonResponse(
+        {
+            'antiguedades' : lista_antiguedades
+        },
+        content_type='application/json;charset=UTF-8'
+    )
 
 
 def __cargar_formulario1(request):

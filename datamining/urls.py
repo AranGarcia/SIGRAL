@@ -10,4 +10,6 @@ urlpatterns = [
          name='articulos_por_sucursal'),
     path('cuarto_trimestre/', views.cuarto_trimestre, name='cuarto_trimestre'),
     path('tercer_trimestre/', views.tercer_trimestre, name='tercer_trimestre'),
+    path('proveedores_antiguedad/', views.proveedores_antiguedad,
+         name='proveedores_antiguedad')
 ]

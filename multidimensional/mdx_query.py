@@ -89,7 +89,7 @@ def articulos_por_sucursal(sucursal, anios=None, por_cagtegorias=False):
 
 
 def pedidos_suc_cuarto_trim(limite=3):
-    query= '''
+    query = '''
     select orden.idSucursal, sucursal.NombreSucursal, tiempo.anio,
         sum(cantidad) as cantidad_enviada from orden
     inner join tiempo on tiempo.IdTiempo = orden.idTiempo
@@ -109,9 +109,11 @@ def pedidos_suc_cuarto_trim(limite=3):
     indices = []
     for ua in ultimos_anios:
         cantidad_maxima = max(res[res['anio'] == ua]['cantidad_enviada'])
-        indices.extend(res[(res['anio'] == ua) & (res['cantidad_enviada'] == cantidad_maxima)].index)
+        indices.extend(res[(res['anio'] == ua) & (
+            res['cantidad_enviada'] == cantidad_maxima)].index)
 
     return res.iloc[indices]
+
 
 def productos_menos_vendidos_vacaciones(limite=10):
     query = '''
@@ -132,13 +134,15 @@ def productos_menos_vendidos_vacaciones(limite=10):
     indices = []
     for a in ultimos_anios:
         cantidad_minima = min(res[res['anio'] == a]['cantidad_enviada'])
-        indices.extend(res[(res['anio'] == a) & (res['cantidad_enviada'] == cantidad_minima)].index)
+        indices.extend(res[(res['anio'] == a) & (
+            res['cantidad_enviada'] == cantidad_minima)].index)
     return res.iloc[indices]
 
 
-def proveedores_por_antiguedad(cant_prov=0):
+def proveedores_por_antiguedad(cant_prov=10):
     query = '''
-    select proveedor.Nombre, min(tiempo.IdTiempo) as primera_orden from orden
+    select proveedor.IdProveedor, proveedor.Nombre, min(tiempo.IdTiempo)
+        as primera_orden from orden
     inner join proveedor on proveedor.IdProveedor = orden.idProveedor
     inner join tiempo on tiempo.IdTiempo = orden.idTiempo
     group by proveedor.IdProveedor
@@ -151,7 +155,6 @@ def proveedores_por_antiguedad(cant_prov=0):
 
     anios = set(res['primera_orden'])
     antiguos = sorted(anios)[:cant_prov]
-    print('Imprimiendo de años', antiguos)
     return res[res['primera_orden'].isin(antiguos)]
 
 
@@ -177,6 +180,7 @@ def productos_por_cantidad(limite=-1, menos_vendidos=False):
 #  CONSULTAS PARA FORMULARIOS
 #
 
+
 def obtener_anios():
     '''Devuelve todos los años disponibles en la BD.'''
 
@@ -188,6 +192,7 @@ def obtener_anios():
     conn.cerrar_conexion()
 
     return [a for a in res['anio']]
+
 
 def obtener_sucursales():
     '''Devuelve todos las sucrusales disponibles en la BD.'''

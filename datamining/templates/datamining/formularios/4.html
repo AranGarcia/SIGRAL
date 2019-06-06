@@ -1,25 +1,19 @@
-		<section>
-			<div class="ancla" id="ancla-5">
-			<h2>Productos más vendidos</h2>
-			
-				<label>año</label>
-				<select class="form-control">
-  				<option value="2012">2012</option>
-  				<option value="2013">2013</option>
-  				<option value="2014">2014</option>
-  				<option value="2015">2015</option>
-  				<option value="2016">2016</option>
-  				<option value="2017">2017</option>
-  				<option value="2018">2018</option>
-				</select>
-				<br>
-				<label>Trimestre</label>
-				<select class="form-control">
-  				<option value="1">1</option>
-  				<option value="2">2</option>
-  				<option value="3">3</option>
-  				<option value="4">4</option>
-				</select><br>
-				<button type="button" class="btn btn-outline-primary">Desplegar</button>
-			</div>
-		</section>
+{% load static %}
+<section>
+    <div class="ancla" id="ancla-5">
+        <h2>Proveedores mas antig&uuml;os</h2>
+
+        <h5>Reporte de los proveedores que cuentan con 10 a&ntilde;os de antig&uuml;edad.</h5>
+
+        <!-- Formulario -->
+        <form action="proveedores_antiguedad/" method="get" id="mdxquery4">
+            <button type="submit" class="btn btn-outline-primary">Desplegar</button>
+        </form><br>
+
+        <!-- Gráfica de resultados -->
+        <div class="container-fluid" id="resultados">
+        </div>
+    </div>
+</section>
+
+<script src="{% static 'js/peticiones/formulario4.js' %}"></script>
