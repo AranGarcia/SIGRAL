@@ -1,4 +1,5 @@
 import base64
+import json
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
@@ -98,8 +99,25 @@ def proveedores_antiguedad(request):
 
     return JsonResponse(
         {
-            'antiguedades' : lista_antiguedades
+            'antiguedades': lista_antiguedades
         },
+        content_type='application/json;charset=UTF-8'
+    )
+
+
+def demanda_productos(request):
+    params = request.GET
+
+    # mes | trimestre | anio
+    periodo = params['periodo']
+    # mas_demanda | menos_demanda
+    tipo = params['tipo']
+
+    menos = False if tipo == 'menos_demanda' else True
+
+    res = mdx_query.productos_por_cantidad(10, menos_vendidos=menos)
+    return HttpResponse(
+        json.dumps(res),
         content_type='application/json;charset=UTF-8'
     )
 

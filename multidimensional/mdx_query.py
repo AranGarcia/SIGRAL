@@ -2,6 +2,7 @@
 Módulo para el acceso a la base de datos multidimensional
 """
 
+import datetime
 import mysql.connector
 import pandas as pd
 
@@ -158,24 +159,33 @@ def proveedores_por_antiguedad(cant_prov=10):
     return res[res['primera_orden'].isin(antiguos)]
 
 
-def productos_por_cantidad(limite=-1, menos_vendidos=False):
+def productos_por_cantidad(limite=10, periodo='a', menos_vendidos=False):
     query = '''
-    select producto.IdProducto as id, producto.NombreProducto as nombre, sum(orden.cantidad) as cantidad from orden
+    select producto.NombreProducto as nombre, tiempo.anio, tiempo.IdTiempo,
+        tiempo.mes, tiempo.trimestre, cantidad from orden
     inner join producto on producto.IdProducto = orden.idProducto
+    inner join tiempo on tiempo.IdTiempo = orden.idTiempo
     group by producto.IdProducto
-    order by sum(orden.cantidad) {}{}'''
+    '''
 
     conn = MySQLConnectionFactory.obtener_instancia()
     conn.abrir_conexion()
-    res = conn.ejecutar(query.format(
-        'asc' if menos_vendidos else 'desc',
-        ' limit %d' % limite if limite > 0 else ''
-    )
-    )
+    res = conn.ejecutar(query)
     conn.cerrar_conexion()
 
-    return res
+    fecha = datetime.datetime.now()
+    anio = max(res['anio']) - 5
 
+    subdf = res[res['anio'] >= anio]
+    nombres = set(subdf['nombre'])
+    nombre_cantidad = []
+    for n in nombres:
+        nombre_cantidad.append(
+            (n, sum(subdf[subdf['nombre'] == n]['cantidad'])))
+
+    def l(x): return x[1]
+    nombre_cantidad.sort(key=l, reverse=menos_vendidos)
+    return nombre_cantidad[:limite]
 #
 #  CONSULTAS PARA FORMULARIOS
 #

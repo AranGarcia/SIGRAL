@@ -140,6 +140,10 @@ def grafica_antiguedad(df):
     plt.title('Cantidad de años desde que el proveedor suministra al almacén.')
 
 
+def graficar_demanda_productos(df):
+    pass
+
+
 def _iter_por_categorias(df):
     """Función auxiliar para crear dataframes por categorías. """
     nom_sucursal = df.iloc[0]['sucursal']
